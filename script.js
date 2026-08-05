@@ -97,6 +97,8 @@ let currentShape = {
 let nextShape = {
     shape: SHAPES[randNext],
     color: COLORS[randNext],
+    row: STARTING_ROW,
+    col: 5,
 }
 
 let gravityDt = 0;
@@ -112,9 +114,6 @@ let speed = 10;
 let gameOver = false;
 
 let keys = {};
-// let dx = 0
-// let dy = 1
-
 
 let grid = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
 let sidebarGrib = Array.from({ length: SIDEBAR_ROWS }, () => Array(SIDEBAR_COLS).fill(0));
@@ -133,7 +132,10 @@ function lockPiece() {
             if (currentShape.shape[row][col] === 0) continue;
             let r = row + currentShape.row
             let c = col + currentShape.col
-            if (r <= 0) gameOver = true;
+            if (r <= 0) {
+                gameOver = true;
+                return;
+            }
             grid[r][c] = currentShape.color;
         }
     }
@@ -147,12 +149,14 @@ function getRandomPiece() {
     nextShape = {
         shape: SHAPES[randNext],
         color: COLORS[randNext],
+        row: STARTING_ROW,
+        col: 5,
     }
 
     return {
         shape: newCurrent.shape,
         color: newCurrent.color,
-        row: STARTING_ROW,
+        row: isColliding(newCurrent) ? -1 : STARTING_ROW,
         col: 5,
     }
 }
@@ -160,7 +164,7 @@ function getRandomPiece() {
 function isColliding(currentShape, direction = null) {
     for (let row = 0; row < currentShape.shape.length; row++) {
         for (let col = 0; col < currentShape.shape[row].length; col++) {
-        
+
             if (currentShape.shape[row][col] === 0) continue;
             let r = row + currentShape.row
             let c = col + currentShape.col
@@ -229,20 +233,6 @@ function rotateClockWise() {
             break;
         }
     }
-
-    // if (!isColliding(transposed)) {
-    //     currentShape.shape = transposed.shape;
-    // } else {
-    //     transposed.col -= 1
-    //     if (!isColliding(transposed)) {
-    //         currentShape = transposed;
-    //     } else {
-    //         transposed.col += 2
-    //         if (!isColliding(transposed)) {
-    //             currentShape = transposed;
-    //         }
-    //     }
-    // }
 }
 
 function drawNexPiece() {
@@ -322,9 +312,12 @@ function update(dt) {
     if (isColliding(currentShape)) {
         //lock piece
         lockPiece()
+
         //create new current piece
-        currentShape = getRandomPiece();
-        gravityDt -= 1
+        if (!gameOver) {
+            currentShape = getRandomPiece();
+            gravityDt -= 1
+        }
     }
 
     // MOVE PIECE
@@ -376,9 +369,6 @@ function draw() {
             ctx.fillRect(c * CELL_SIZE, r * CELL_SIZE, CELL_SIZE - 2, CELL_SIZE - 2)
         }
     }
-
-
-
 }
 
 // MAIN FUNCTION 
