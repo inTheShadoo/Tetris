@@ -9,6 +9,7 @@ body {
     margin: 0;
     display: flex;
     justify-content: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     align-items: center;
     background-color: var(--bg-color)
 }
@@ -16,7 +17,24 @@ body {
 canvas {
     border-radius: 1rem;
     overflow: hidden;
-    border: 2px var(--border-color) solid;
-    background-color: var(--border-color);
     box-shadow: 3px 2px 10px 10px rgb(85, 85, 100);
+}
+
+.side {
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+
+    color: white;
+    height: fit-content;
+    padding: 1rem;
+    align-items: center;
+}
+
+.main {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: end;
+    gap: 2rem;
+
 }
